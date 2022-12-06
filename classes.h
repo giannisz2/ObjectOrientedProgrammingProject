@@ -64,6 +64,7 @@ class Monster : public Humanoid { // subclass that inherit Humanoid hyperclass
 	unsigned int numMeds; // m[1]
 	unsigned int strengthPoints; // m[2]
 	unsigned int defencePoints; // m[3]
+	bool state = true; // true if alive, false if defeated. m[4]
 public:
 	Monster(Coordinates coord, unsigned int HP, unsigned int n_M, unsigned int str, unsigned int def) :
 		Humanoid(coord), HealthPoints(HP), numMeds(n_M), strengthPoints(str), defencePoints(def) {};
@@ -85,6 +86,8 @@ public:
 			break;
 		case 3:
 			return defencePoints;
+		case 4:
+			return state;
 		default:
 			return 11; // error 
 		}
@@ -126,7 +129,7 @@ public:
 
 
 class Terrain {
-	const Coordinates point;
+	Coordinates point;
 public:
 	Terrain(Coordinates coords) : point(coords) {};
 
