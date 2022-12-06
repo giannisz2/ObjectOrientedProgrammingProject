@@ -93,6 +93,18 @@ public:
 		}
 	}
 
+	void changeState() {
+		state = false;
+	}
+
+	void loseHP(int n) {
+		HealthPoints -= n;
+	}
+
+	void consumedMed() {
+		numMeds -= 1;
+	}
+
 	~Monster() {};
 };
 
