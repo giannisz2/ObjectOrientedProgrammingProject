@@ -1,8 +1,13 @@
 #include <iostream>
 #include <vector>
 
+#include <conio.h>
+#include <Windows.h>
+
 #include "classes.h"
 #include "types.h"
+
+using namespace std;
 
 
 
@@ -66,18 +71,21 @@ void placeHazards(char** Map, treeVector& vecT, riverVector& vecR, int rows, int
 	int counter_R = 0;
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < columns; j++) {
+			
 			if ((counter_T - vecT.size()) != 0) {
 				Tree tree = vecT.at(counter_T);
 				if (tree.getCoord().x == i and tree.getCoord().y == j and
 					// restrictions for tree placement, to not collide with avatar who has those coordinates
 					(tree.getCoord().x != (rows / 2) or tree.getCoord().y == (columns / 2))) {
 
-					Map[i][j] = vecT.at(counter_T).getName();
+					Map[i][j] = tree.getName();
+					
 
 					counter_T++;
 					continue; // if you place a tree, continue because we don't want a river on top of the tree
 				}
 			}
+			
 
 			if ((counter_R - vecR.size()) != 0) {
 				River river = vecR.at(counter_R);
@@ -85,7 +93,7 @@ void placeHazards(char** Map, treeVector& vecT, riverVector& vecR, int rows, int
 					// restrictions for river placement, to not collide with avatar who has those coordinates
 					(river.getCoord().x != (rows / 2) or river.getCoord().y == (columns / 2))) {
 
-					Map[i][j] = vecR.at(counter_R).getName();
+					Map[i][j] = river.getName();
 
 					counter_R++;
 
@@ -107,14 +115,14 @@ void placeCharacters(char** Map, warewolfVector& vecW, vampireVector& vecV, int 
 	for (int i = 0; i < rows; i++) {
 
 		if (counter_W - vecW.size() != 0) {
-			WareWolf wolf = vecW.at(counter_W);		
+		
 			Map[i][0] = vecW.at(counter_W).getName();
 			counter_W++;
 			
 		}
 
 		if (counter_V - vecV.size() != 0) {
-			Vampire vamp = vecV.at(counter_V);		
+				
 			Map[i][columns-1] = vecV.at(counter_V).getName();
 			counter_V++;
 		}
@@ -173,14 +181,119 @@ void getActionAvatar(char** Map, Avatar avatar, int rows, int columns) {
 		return;
 }
 
-void moveCharacters() {
+void moveCharacters(char** Map, warewolfVector& vecW, vampireVector& vecV, int rows, int columns) {
+	srand(time(NULL));
+	int W = 0;
+	int V = 0;
+	
+	for (int i = 0; i < vecW.size(); i++) {
+		int wolf_x = vecW.at(W).getCoord().x;
+		int wolf_y = vecW.at(W).getCoord().y;
 
+		int vamp_x = vecV.at(V).getCoord().x;
+		int vamp_y = vecV.at(V).getCoord().y;
+
+		// WAREWOLF MOVEMENT
+		Coordinates new_point1 = { wolf_x - 1, wolf_y };
+		Coordinates new_point2 = { wolf_x , wolf_y - 1 };
+		Coordinates new_point3 = { wolf_x + 1, wolf_y };
+		Coordinates new_point4 = { wolf_x, wolf_y + 1 };
+		Coordinates next_point;
+
+		int choose_rand = rand() % 4;
+		switch (choose_rand) {
+		case 0:
+			next_point = new_point1;
+			break;
+		case 1:
+			next_point = new_point2;
+			break;
+		case 2:
+			next_point = new_point3;
+			break;
+		case 3:
+			next_point = new_point4;
+		}
+
+
+		if (next_point.x > (rows - 1) or next_point.x < 0 or next_point.y >(columns - 1) or next_point.y < 0) {
+			break;
+		}
+
+		if (Map[wolf_x + 1][wolf_y] != '.') {
+			int x = wolf_x + 1;
+			int y = wolf_y;
+
+			if (Map[x][y] == 'V') {
+				for (int k = 0; k < vecV.size(); k++) {
+					if (vecV.at(k).getCoord().x == x and vecV.at(k).getCoord().y == y) {
+						if (vecW.at(W)[2] > vecW.at(V)[2]) {
+							vecV.at(V).loseHP(vecW.at(W)[2]);
+							continue;
+						}
+					}
+				}
+			}
+		}
+
+		if (Map[wolf_x][wolf_y + 1] != '.') {
+			int x = wolf_x;
+			int y = wolf_y + 1;
+
+			if (Map[x][y] == 'V') {
+				for (int k = 0; k < vecV.size(); k++) {
+					if (vecV.at(k).getCoord().x == x and vecV.at(k).getCoord().y == y) {
+						if (vecW.at(W)[2] > vecW.at(V)[2]) {
+							vecV.at(V).loseHP(vecW.at(W)[2]);
+							continue;
+						}
+					}
+				}
+			}
+		}
+
+		if (Map[wolf_x - 1][wolf_y] != '.') {
+			int x = wolf_x - 1;
+			int y = wolf_y;
+
+			if (Map[x][y] == 'V') {
+				for (int k = 0; k < vecV.size(); k++) {
+					if (vecV.at(k).getCoord().x == x and vecV.at(k).getCoord().y == y) {
+						if (vecW.at(W)[2] > vecW.at(V)[2]) {
+							vecV.at(V).loseHP(vecW.at(W)[2]);
+							continue;
+						}
+					}
+				}
+			}
+		}
+
+		if (Map[wolf_x][wolf_y - 1] != '.') {
+			int x = wolf_x;
+			int y = wolf_y - 1;
+
+			if (Map[x][y] == 'V') {
+				for (int k = 0; k < vecV.size(); k++) {
+					if (vecV.at(k).getCoord().x == x and vecV.at(k).getCoord().y == y) {
+						if (vecW.at(W)[2] > vecW.at(V)[2]) {
+							vecV.at(V).loseHP(vecW.at(W)[2]);
+							continue;
+						}
+					}
+				}
+			}
+		}
+
+		vecW.at(i).move(next_point);
+
+		W++;
+		V++;
+	}
 }
 
 void placePotions() {
 
 }
-
 
 void pause(warewolfVector& vecW, vampireVector& vecV) {
 
@@ -225,5 +338,6 @@ void pause(warewolfVector& vecW, vampireVector& vecV) {
 		cout << "The warewolves are winning." << endl;
 	}
 
-	if (_getch()) return;
+	system("pause");
+	return;
 }
