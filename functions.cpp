@@ -133,9 +133,53 @@ void placePotions() {
 
 }
 
-void pause() {
 
+void pause(warewolfVector& vecW, vampireVector& vecV) {
+
+	system("cls");
+	int defeatedWarewolves = 0;
+	int defeatedVampires = 0;
+
+	for (int i = 0; i < vecW.size(); i++) {
+		WareWolf wolf = vecW.at(i);
+
+		if (wolf[4] == true) {
+			cout << "|Warewolf stats ->" "HP: " << wolf[0] << " Meds: " << wolf[1] << " STR: "
+				<< wolf[2] << " DEF: " << wolf[3] << ".|" << endl;
+		}
+		else {
+			defeatedWarewolves++;
+			cout << "*This warewolf is defeated.*" << endl;
+		}
+
+	}
+
+	cout << endl << endl;
+	
+	for (int i = 0; i < vecV.size(); i++) {
+		Vampire vamp = vecV.at(i);
+
+		if (vamp[4] == true) {
+			cout << "|Vampire stats ->" "HP: " << vamp[0] << " Meds: " << vamp[1] << " STR: "
+				<< vamp[2] << " DEF: " << vamp[3] << ".|" << endl;
+		}
+		else {
+			defeatedVampires++;
+			cout << "*This vampire is defeated.*" << endl;
+		}
+
+	}
+
+	if (defeatedWarewolves > defeatedVampires) {
+		cout << "The vampires are winning." << endl;
+	}
+	else if (defeatedVampires > defeatedWarewolves) {
+		cout << "The warewolves are winning." << endl;
+	}
+
+	if (_getch()) return;
 }
+
 
 void gameOver() {
 
