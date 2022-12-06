@@ -67,10 +67,17 @@ int main() {
 	placeCharacters(Map, vecW, vecV, rows, columns);
 	//pause(vecW, vecV);
 	printMap(Map, rows, columns);
+	
+	cout << "If you want to move forward press W button" << endl;
+	cout << "If you want to move backward press S button" << endl;
+	cout << "If you want to move to the right press D button" << endl;
+	cout << "If you want to move to the left press A button" << endl;
+	cout << "if you want to stop the game press P button" << endl;
+	cout << "If you want to heal press E button" << endl;
+	cout << "If you want to exit press M button" << endl;
+	cout << "Game start" << endl;
 
-	//system("cls");
-	pause(vecW, vecV);
 
-	printMap(Map, rows, columns);
+	
 
 }
