@@ -121,48 +121,56 @@ void placeCharacters(char** Map, warewolfVector& vecW, vampireVector& vecV, int 
 	}
 }
 
-void getActionAvatar(char** map, Avatar avatar, int rows, int columns) {
-	long current_tick, two_second_delay = (GetTickCount64() + 5);
+void getActionAvatar(char** Map, Avatar avatar, int rows, int columns) {
+	long current_tick;
+	long two_second_delay = (GetTickCount64() + 100);
+	
+	unsigned int avatars_x = avatar.getCoord().x;
+	unsigned int avatars_y = avatar.getCoord().y;
+	do {
+		if (_kbhit()) {
+			if (_getch() == key_W) {
+				if ((avatars_x <= (rows - 1) && avatars_x >= 0) && (avatars_y <= (columns - 1) && avatars_y >= 0)) {
+					Map[avatars_x][avatars_y] = '.';
+					avatar.move({ (unsigned int)(avatars_x - 1), (unsigned int)(avatars_y) });
+					avatars_x = avatar.getCoord().x;
+					avatars_y = avatar.getCoord().y;
+					Map[avatars_x][avatars_y] = avatar.getName();
+				}
+			}
+			else if (_getch() == key_S) {
+				if ((avatars_x <= (rows - 1) && avatars_x >= 0) && (avatars_y <= (columns - 1) && avatars_y >= 0)) {
+					Map[avatars_x][avatars_y] = '.';
+					avatar.move({ (unsigned int)(avatars_x + 1), (unsigned int)(avatars_y) });
+					avatars_x = avatar.getCoord().x;
+					avatars_y = avatar.getCoord().y;
+					Map[avatars_x][avatars_y] = avatar.getName();
+				}
+			}
+			else if (_getch() == key_D) {
+				if ((avatars_x <= (rows - 1) && avatars_x >= 0) && (avatars_y <= (columns - 1) && avatars_y >= 0)) {
+					Map[avatars_x][avatars_y] = '.';
+					avatar.move({ (unsigned int)(avatars_x), (unsigned int)(avatars_y + 1) });
+					avatars_x = avatar.getCoord().x;
+					avatars_y = avatar.getCoord().y;
+					Map[avatars_x][avatars_y] = avatar.getName();
+				}
+			}
+			else if (_getch() == key_A) {
+				if ((avatars_x <= (rows - 1) && avatars_x >= 0) && (avatars_y <= (columns - 1) && avatars_y >= 0)) {
+					Map[avatars_x][avatars_y] = '.';
+					avatar.move({ (unsigned int)(avatars_x), (unsigned int)(avatars_y - 1) });
+					avatars_x = avatar.getCoord().x;
+					avatars_y = avatar.getCoord().y;
+					Map[avatars_x][avatars_y] = avatar.getName();
+				}
+			}
+		}
+		current_tick = GetTickCount64();
+	} while (current_tick < two_second_delay);
 
-	unsigned int avatars_x = avatar.get_coord().x;
-	unsigned int avatars_y = avatar.get_coord().y;
-	if (_getch() == key_W) {
-		if ((avatars_x <= (rows - 1) && avatars_x >= 0) && (avatars_y <= (columns - 1) && avatars_y >= 0)) {
-			map[avatars_x][avatars_y] = '.';
-			avatar.move({ (unsigned int) (avatars_x - 1), (unsigned int) (avatars_y)});
-			avatars_x = avatar.get_coord().x;
-			avatars_y = avatar.get_coord().y;
-			map[avatars_x][avatars_y] = avatar.get_name();	
-		}
-	}
-	else if (_getch() == key_S) {
-		if ((avatars_x <= (rows - 1) && avatars_x >= 0) && (avatars_y <= (columns - 1) && avatars_y >= 0)) {
-			map[avatars_x][avatars_y] = '.';
-			avatar.move({ (unsigned int) (avatars_x + 1), (unsigned int) (avatars_y)});
-			avatars_x = avatar.get_coord().x;
-			avatars_y = avatar.get_coord().y;
-			map[avatars_x][avatars_y] = avatar.get_name();
-		}
-	}
-	else if (_getch() == key_D) {
-		if ((avatars_x <= (rows - 1) && avatars_x >= 0) && (avatars_y <= (columns - 1) && avatars_y >= 0)) {
-			map[avatars_x][avatars_y] = '.';
-			avatar.move({ (unsigned int) (avatars_x), (unsigned int) (avatars_y + 1)});
-			avatars_x = avatar.get_coord().x;
-			avatars_y = avatar.get_coord().y;
-			map[avatars_x][avatars_y] = avatar.get_name();
-		}
-	}
-	else if (_getch() == key_A) {
-		if ((avatars_x <= (rows - 1)  && avatars_x >= 0) && (avatars_y <= (columns - 1) && avatars_y >= 0)) {
-			map[avatars_x][avatars_y] = '.';
-			avatar.move({ (unsigned int) (avatars_x), (unsigned int) (avatars_y - 1) });
-			avatars_x = avatar.get_coord().x;
-			avatars_y = avatar.get_coord().y;
-			map[avatars_x][avatars_y] = avatar.get_name();
-		}
-	}
-
+	if (current_tick >= two_second_delay)
+		return;
 }
 
 void moveCharacters() {
@@ -218,9 +226,4 @@ void pause(warewolfVector& vecW, vampireVector& vecV) {
 	}
 
 	if (_getch()) return;
-}
-
-
-void gameOver() {
-
 }
