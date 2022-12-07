@@ -292,7 +292,17 @@ void moveCharacters(char** Map, warewolfVector& vecW, vampireVector& vecV, int r
 }
 
 void placePotions() {
-
+	bool put_potion = false;
+	while (put_potion == false) {
+		unsigned int x = rand() % (rows - 1);
+		unsigned int y = rand() % (columns - 1);
+		if (map[x][y] == '.') {
+			Potion potion({x, y});
+			map[x][y] = potion.get_name();
+			put_potion = true;
+		}
+	}
+	return;
 }
 
 void pause(warewolfVector& vecW, vampireVector& vecV) {
