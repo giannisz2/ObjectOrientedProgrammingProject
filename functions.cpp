@@ -138,7 +138,10 @@ void getActionAvatar(char** Map, Avatar avatar, int rows, int columns) {
 	do {
 		if (_kbhit()) {
 			if (_getch() == key_W) {
-				if ((avatars_x <= (rows - 1) && avatars_x >= 0) && (avatars_y <= (columns - 1) && avatars_y >= 0)) {
+				if (_getch() == key_W) {
+				if (avatars_x - 1 == -1 or Map[avatars_x - 1][avatars_y] != '.') // if UP coord is out of grid or it's an object just return
+					return;
+				else {	
 					Map[avatars_x][avatars_y] = '.';
 					avatar.move({ (unsigned int)(avatars_x - 1), (unsigned int)(avatars_y) });
 					avatars_x = avatar.getCoord().x;
@@ -147,7 +150,9 @@ void getActionAvatar(char** Map, Avatar avatar, int rows, int columns) {
 				}
 			}
 			else if (_getch() == key_S) {
-				if ((avatars_x <= (rows - 1) && avatars_x >= 0) && (avatars_y <= (columns - 1) && avatars_y >= 0)) {
+				if (avatars_x + 1 > (rows - 1) or Map[avatars_x + 1][avatars_y] != '.') // if DOWN coord is out of grid or it's an object just return
+					return;
+				else{	
 					Map[avatars_x][avatars_y] = '.';
 					avatar.move({ (unsigned int)(avatars_x + 1), (unsigned int)(avatars_y) });
 					avatars_x = avatar.getCoord().x;
@@ -156,7 +161,9 @@ void getActionAvatar(char** Map, Avatar avatar, int rows, int columns) {
 				}
 			}
 			else if (_getch() == key_D) {
-				if ((avatars_x <= (rows - 1) && avatars_x >= 0) && (avatars_y <= (columns - 1) && avatars_y >= 0)) {
+				if (avatars_y + 1 > (columns - 1) or Map[avatars_x][avatars_y + 1] != '.') // if RIGHT coord is out of grid or it's an object just return
+					return;
+				else {
 					Map[avatars_x][avatars_y] = '.';
 					avatar.move({ (unsigned int)(avatars_x), (unsigned int)(avatars_y + 1) });
 					avatars_x = avatar.getCoord().x;
@@ -165,7 +172,9 @@ void getActionAvatar(char** Map, Avatar avatar, int rows, int columns) {
 				}
 			}
 			else if (_getch() == key_A) {
-				if ((avatars_x <= (rows - 1) && avatars_x >= 0) && (avatars_y <= (columns - 1) && avatars_y >= 0)) {
+				if (avatars_y - 1 == 0 or Map[avatars_x][avatars_y - 1] != '.') // if LEFT coord is out of grid or it's an object just return
+					return;
+				else {
 					Map[avatars_x][avatars_y] = '.';
 					avatar.move({ (unsigned int)(avatars_x), (unsigned int)(avatars_y - 1) });
 					avatars_x = avatar.getCoord().x;
