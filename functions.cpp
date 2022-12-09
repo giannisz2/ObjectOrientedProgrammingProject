@@ -129,7 +129,7 @@ void placeCharacters(char** Map, warewolfVector& vecW, vampireVector& vecV, int 
 	}
 }
 
-void getActionAvatar(char** Map, Avatar avatar, warewolfVector& vecW, vampireVector& vecV, int rows, int columns, int HP) {
+void getActionAvatar(char** Map, Avatar& avatar, warewolfVector& vecW, vampireVector& vecV, int rows, int columns, int HP) {
 	long current_tick, two_second_delay = (GetTickCount64() + 5000);
 	char keydown = 'k';
 	printMap(Map, rows, columns);
