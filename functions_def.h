@@ -14,4 +14,4 @@ void placeCharacters(char**, warewolfVector&, vampireVector&, int, int);
 void pause(Avatar, warewolfVector&, vampireVector&);
 void getActionAvatar(char**, Avatar&, warewolfVector&, vampireVector&, int, int, int);
 void placePotion(char**, int, int);
-void moveCharacters(char**, warewolfVector&, vampireVector&, i)
+void moveWareWolves(char**, warewolfVector&, vampireVector&, i)
