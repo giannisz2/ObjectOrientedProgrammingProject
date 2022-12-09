@@ -266,7 +266,7 @@ void placePotion(char** Map, Avatar& avatar, int rows, int columns) {
 
 
 
-void pause(warewolfVector& vecW, vampireVector& vecV) {
+void pause(Avatar avatar, warewolfVector& vecW, vampireVector& vecV) {
 
 	system("cls");
 	int defeatedWarewolves = 0;
@@ -308,6 +308,12 @@ void pause(warewolfVector& vecW, vampireVector& vecV) {
 	else if (defeatedVampires > defeatedWarewolves) {
 		cout << "The warewolves are winning." << endl;
 	}
+	
+	cout << endl;
+	if (avatar.getDayState() == true)
+		cout << "It's day" << endl;
+	else
+		cout << "It's night" << endl;
 
 	system("pause");
 	return;
