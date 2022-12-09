@@ -95,6 +95,9 @@ public:
 			return 11; // error 
 		}
 	}
+	void set_health(unsigned int healthpoints) {
+		HealthPoints = healthpoints;
+	}
 
 	void changeState() {
 		state = false;
