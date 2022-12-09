@@ -249,9 +249,9 @@ void moveCharacters(char** Map, warewolfVector& vecW, vampireVector& vecV, int r
 
 
 
-void placePotions(char** Map, Avatar& avatar, int rows, int columns) {
+void placePotion(char** Map, Avatar& avatar, int rows, int columns) {
 	bool put_potion = false;
-	while (put_potion == false and avatar.getPotions() > 0) {
+	while (put_potion == false and avatar.getPotions() > 0 and  avatar.getPotions() < 3) {
 		unsigned int x = rand() % (rows - 1) + 1;
 		unsigned int y = rand() % (columns - 1) + 1;
 		if (Map[x][y] == '.') {
