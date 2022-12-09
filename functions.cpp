@@ -29,6 +29,8 @@ char** mapCreate(int rows, int columns) {
 
 
 
+
+
 void printMap(char** Map, int rows, int columns) {
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < columns; j++) {
@@ -37,6 +39,8 @@ void printMap(char** Map, int rows, int columns) {
 		cout << endl;
 	}
 }
+
+
 
 
 
@@ -61,6 +65,8 @@ bool chooseTeam() {
 
 	return t;
 }
+
+
 
 
 
@@ -107,6 +113,8 @@ void placeHazards(char** Map, treeVector& vecT, riverVector& vecR, int rows, int
 
 
 
+
+
 void placeCharacters(char** Map, warewolfVector& vecW, vampireVector& vecV, int rows, int columns) {
 
 	int counter_W = 0;
@@ -129,6 +137,10 @@ void placeCharacters(char** Map, warewolfVector& vecW, vampireVector& vecV, int 
 	}
 }
 
+
+
+
+
 void getActionAvatar(char** Map, Avatar& avatar, warewolfVector& vecW, vampireVector& vecV, int rows, int columns, int HP) {
 	long current_tick, two_second_delay = (GetTickCount64() + 5000);
 	char keydown = 'k';
@@ -143,6 +155,10 @@ void getActionAvatar(char** Map, Avatar& avatar, warewolfVector& vecW, vampireVe
 			if (avatars_x - 1 == -1 or Map[avatars_x - 1][avatars_y] != '.') {
 				return;
 			}
+			if(Map[avatars_x - 1][avatars_y] == 'P') {
+				Map[avatars_x - 1][avatars_y] = '.';
+				avatar.addPotion();
+			}
 			else {
 				Map[avatars_x][avatars_y] = '.';
 				avatar.move({ (unsigned int)(avatars_x - 1), (unsigned int)(avatars_y) });
@@ -154,6 +170,10 @@ void getActionAvatar(char** Map, Avatar& avatar, warewolfVector& vecW, vampireVe
 		else if (keydown == key_S) {
 			if (avatars_x + 1 > (rows - 1) or Map[avatars_x + 1][avatars_y] != '.') {
 				return;
+			}
+			if(Map[avatars_x + 1][avatars_y] == 'P') {
+				Map[avatars_x - 1][avatars_y] = '.';
+				avatar.addPotion();
 			}
 			else {
 				Map[avatars_x][avatars_y] = '.';
@@ -167,6 +187,10 @@ void getActionAvatar(char** Map, Avatar& avatar, warewolfVector& vecW, vampireVe
 			if (avatars_y + 1 > (columns - 1) or Map[avatars_x][avatars_y + 1] != '.') {
 				return;
 			}
+			if(Map[avatars_x][avatars_y + 1] == 'P') {
+				Map[avatars_x - 1][avatars_y] = '.';
+				avatar.addPotion();
+			}
 			else {
 				Map[avatars_x][avatars_y] = '.';
 				avatar.move({ (unsigned int)(avatars_x), (unsigned int)(avatars_y + 1) });
@@ -178,6 +202,10 @@ void getActionAvatar(char** Map, Avatar& avatar, warewolfVector& vecW, vampireVe
 		else if (keydown == key_A) {
 			if (avatars_y - 1 == 0 or Map[avatars_x][avatars_y - 1] != '.') {
 				return;
+			}
+			if(Map[avatars_x][avatars_y - 1] == 'P') {
+				Map[avatars_x - 1][avatars_y] = '.';
+				avatar.addPotion();
 			}
 			else {
 				Map[avatars_x][avatars_y] = '.';
@@ -212,129 +240,31 @@ void getActionAvatar(char** Map, Avatar& avatar, warewolfVector& vecW, vampireVe
 	}
 }
 
+
+
+
 void moveCharacters(char** Map, warewolfVector& vecW, vampireVector& vecV, int rows, int columns) {
-	srand(time(NULL));
-	int W = 0;
-	int V = 0;
 	
-	for (int i = 0; i < vecW.size(); i++) {
-		int wolf_x = vecW.at(W).getCoord().x;
-		int wolf_y = vecW.at(W).getCoord().y;
-
-		int vamp_x = vecV.at(V).getCoord().x;
-		int vamp_y = vecV.at(V).getCoord().y;
-
-		// WAREWOLF MOVEMENT
-		Coordinates new_point1 = { wolf_x - 1, wolf_y };
-		Coordinates new_point2 = { wolf_x , wolf_y - 1 };
-		Coordinates new_point3 = { wolf_x + 1, wolf_y };
-		Coordinates new_point4 = { wolf_x, wolf_y + 1 };
-		Coordinates next_point;
-
-		int choose_rand = rand() % 4;
-		switch (choose_rand) {
-		case 0:
-			next_point = new_point1;
-			break;
-		case 1:
-			next_point = new_point2;
-			break;
-		case 2:
-			next_point = new_point3;
-			break;
-		case 3:
-			next_point = new_point4;
-		}
-
-
-		if (next_point.x > (rows - 1) or next_point.x < 0 or next_point.y >(columns - 1) or next_point.y < 0) {
-			break;
-		}
-
-		if (Map[wolf_x + 1][wolf_y] != '.') {
-			int x = wolf_x + 1;
-			int y = wolf_y;
-
-			if (Map[x][y] == 'V') {
-				for (int k = 0; k < vecV.size(); k++) {
-					if (vecV.at(k).getCoord().x == x and vecV.at(k).getCoord().y == y) {
-						if (vecW.at(W)[2] > vecW.at(V)[2]) {
-							vecV.at(V).loseHP(vecW.at(W)[2]);
-							continue;
-						}
-					}
-				}
-			}
-		}
-
-		if (Map[wolf_x][wolf_y + 1] != '.') {
-			int x = wolf_x;
-			int y = wolf_y + 1;
-
-			if (Map[x][y] == 'V') {
-				for (int k = 0; k < vecV.size(); k++) {
-					if (vecV.at(k).getCoord().x == x and vecV.at(k).getCoord().y == y) {
-						if (vecW.at(W)[2] > vecW.at(V)[2]) {
-							vecV.at(V).loseHP(vecW.at(W)[2]);
-							continue;
-						}
-					}
-				}
-			}
-		}
-
-		if (Map[wolf_x - 1][wolf_y] != '.') {
-			int x = wolf_x - 1;
-			int y = wolf_y;
-
-			if (Map[x][y] == 'V') {
-				for (int k = 0; k < vecV.size(); k++) {
-					if (vecV.at(k).getCoord().x == x and vecV.at(k).getCoord().y == y) {
-						if (vecW.at(W)[2] > vecW.at(V)[2]) {
-							vecV.at(V).loseHP(vecW.at(W)[2]);
-							continue;
-						}
-					}
-				}
-			}
-		}
-
-		if (Map[wolf_x][wolf_y - 1] != '.') {
-			int x = wolf_x;
-			int y = wolf_y - 1;
-
-			if (Map[x][y] == 'V') {
-				for (int k = 0; k < vecV.size(); k++) {
-					if (vecV.at(k).getCoord().x == x and vecV.at(k).getCoord().y == y) {
-						if (vecW.at(W)[2] > vecW.at(V)[2]) {
-							vecV.at(V).loseHP(vecW.at(W)[2]);
-							continue;
-						}
-					}
-				}
-			}
-		}
-
-		vecW.at(i).move(next_point);
-
-		W++;
-		V++;
-	}
 }
 
-void placePotions() {
+
+
+void placePotions(char** Map, Avatar& avatar, int rows, int columns) {
 	bool put_potion = false;
-	while (put_potion == false) {
-		unsigned int x = rand() % (rows - 1);
-		unsigned int y = rand() % (columns - 1);
-		if (map[x][y] == '.') {
+	while (put_potion == false and avatar.getPotions() > 0) {
+		unsigned int x = rand() % (rows - 1) + 1;
+		unsigned int y = rand() % (columns - 1) + 1;
+		if (Map[x][y] == '.') {
 			Potion potion({x, y});
-			map[x][y] = potion.get_name();
+			Map[x][y] = potion.getName();
 			put_potion = true;
 		}
 	}
 	return;
 }
+
+
+
 
 void pause(warewolfVector& vecW, vampireVector& vecV) {
 
