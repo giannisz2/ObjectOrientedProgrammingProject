@@ -243,7 +243,7 @@ void getActionAvatar(char** Map, Avatar& avatar, warewolfVector& vecW, vampireVe
 
 
 
-void moveWareWolves(char** Map, warewolfVector& vecW, int rows, int columns) {
+void moveWareWolves(char** Map, warewolfVector& vecW, vampireVector& vecV int rows, int columns) {
 	srand(time(NULL));
 	int i = 0;
 	
