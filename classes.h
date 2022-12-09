@@ -55,7 +55,7 @@ public:
 	bool getDayState() {
 		return dayState;
 	}
-	void set_potion() {
+	void addPotion() {
 		numPotions += 1;
 	}
 
@@ -95,7 +95,8 @@ public:
 			return 11; // error 
 		}
 	}
-	void set_health(unsigned int healthpoints) {
+	
+	void fullHP(unsigned int healthpoints) {
 		HealthPoints = healthpoints;
 	}
 
