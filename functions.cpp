@@ -243,8 +243,108 @@ void getActionAvatar(char** Map, Avatar& avatar, warewolfVector& vecW, vampireVe
 
 
 
-void moveCharacters(char** Map, warewolfVector& vecW, vampireVector& vecV, int rows, int columns) {
+void moveWareWolves(char** Map, warewolfVector& vecW, int rows, int columns) {
+	srand(time(NULL));
+	int i = 0;
 	
+	vector<WareWolf>::iterator itr;
+	for (itr = vecW.begin(); itr != vecW.end(); itr++) {
+
+		Coordinates coord = { 0,0 };
+		unsigned int wolf_x = vecW.at(i).getCoord().x;
+		unsigned int wolf_y = vecW.at(i).getCoord().y;
+
+		int r = rand() % 4 + 1;
+		
+		switch (r) {
+		case 1:
+			coord = { wolf_x - 1,wolf_y };
+			break;
+		case 2:
+			coord = { wolf_x + 1,wolf_y };
+			break;
+		case 3:
+			coord = { wolf_x,wolf_y - 1};
+			break;
+		case 4:
+			coord = { wolf_x,wolf_y + 1 };
+		}
+		
+		if (coord.x < 0 or coord.x >= rows or coord.y < 0 or coord.y >= columns) {
+			return;
+		}
+
+		if (Map[coord.x][coord.y] == '.') {
+			Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y] = '.';
+			vecW.at(i).move(coord);
+			Map[coord.x][coord.y] = vecW.at(i).getName();
+			
+		}
+
+		else if (Map[coord.x][coord.y] == 'V') {
+			int j = 0;
+			vector<Vampire>::iterator itr2;
+			for (itr2 = vecV.begin(); itr2 != vecV.end(); itr2++) {
+
+				if (vecV.at(j)[4] != false) {
+					unsigned int vamp_x = vecV.at(j).getCoord().x;
+					unsigned int vamp_y = vecV.at(j).getCoord().y;
+
+					if (wolf_x != vamp_x or wolf_y != vamp_y) {
+						continue;
+					}
+
+					else {
+
+						if (vecW.at(i)[2] >= vecV.at(j)[2]) { // if wolf strenght is higher or equal to vamp 
+							int diff = vecW.at(i)[2] - vecV.at(j)[3];
+							vecV.at(j).loseHP(diff);
+							if (diff < 0) break;
+							else {
+								if (vecV.at(j)[0] <= 0) {
+									Map[vamp_x][vamp_y] = '.';
+									vecV.at(j).changeState();	
+								}
+								break;
+							}
+						}
+						else {
+							if (vecW.at(i).getCoord().x + 1 == '.' and vecW.at(i).getCoord().x + 1 < rows) {
+								Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y] = '.';
+								vecW.at(i).move({ vecW.at(i).getCoord().x + 1 , vecW.at(i).getCoord().y });
+								Map[vecW.at(i).getCoord().x + 1][vecW.at(i).getCoord().y] = vecW.at(i).getName();
+								break;
+							}
+							else if (vecW.at(i).getCoord().x - 1 == '.' and vecW.at(i).getCoord().x - 1 >= 0) {
+								Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y] = '.';
+								vecW.at(i).move({ vecW.at(i).getCoord().x - 1 , vecW.at(i).getCoord().y });
+								Map[vecW.at(i).getCoord().x - 1][vecW.at(i).getCoord().y] = vecW.at(i).getName();
+								break;
+							}
+							else if (vecW.at(i).getCoord().y + 1 == '.' and vecW.at(i).getCoord().y + 1 < columns) {
+								Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y] = '.';
+								vecW.at(i).move({ vecW.at(i).getCoord().x , vecW.at(i).getCoord().y + 1 });
+								Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y + 1] = vecW.at(i).getName();
+								break;
+							}
+							else if (vecW.at(i).getCoord().y - 1 == '.' and vecW.at(i).getCoord().y - 1 >= 0) {
+								Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y] = '.';
+								vecW.at(i).move({ vecW.at(i).getCoord().x , vecW.at(i).getCoord().y - 1 });
+								Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y - 1] = vecW.at(i).getName();
+								break;
+							}
+						}
+					}
+				}
+			}
+			j++;
+		}
+		/*else if (Map[coord.x][coord.y] == 'W') {
+
+
+		}*/
+		i++;
+	}
 }
 
 
