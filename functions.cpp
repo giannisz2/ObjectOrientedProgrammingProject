@@ -129,10 +129,10 @@ void placeCharacters(char** Map, warewolfVector& vecW, vampireVector& vecV, int 
 	}
 }
 
-void getActionAvatar(char** Map, Avatar avatar, int rows, int columns, int HP) {
+void getActionAvatar(char** Map, Avatar avatar, warewolfVector& vecW, vampireVector& vecV, int rows, int columns, int HP) {
 	long current_tick, two_second_delay = (GetTickCount64() + 5000);
 	char keydown = 'k';
-	printMap(map, rows, columns);
+	printMap(Map, rows, columns);
 	do {
 		if (_kbhit()) {
 			keydown = _getch();
@@ -140,68 +140,68 @@ void getActionAvatar(char** Map, Avatar avatar, int rows, int columns, int HP) {
 		unsigned int avatars_x = avatar.getCoord().x;
 		unsigned int avatars_y = avatar.getCoord().y;
 		if (keydown == key_W) {
-			if (avatars_x - 1 == -1 or map[avatars_x - 1][avatars_y] != '.') {
+			if (avatars_x - 1 == -1 or Map[avatars_x - 1][avatars_y] != '.') {
 				return;
 			}
 			else {
-				map[avatars_x][avatars_y] = '.';
+				Map[avatars_x][avatars_y] = '.';
 				avatar.move({ (unsigned int)(avatars_x - 1), (unsigned int)(avatars_y) });
 				avatars_x = avatar.getCoord().x;
 				avatars_y = avatar.getCoord().y;
-				map[avatars_x][avatars_y] = avatar.getName();
+				Map[avatars_x][avatars_y] = avatar.getName();
 			}
 		}
 		else if (keydown == key_S) {
-			if (avatars_x + 1 > (rows - 1) or map[avatars_x + 1][avatars_y] != '.') {
+			if (avatars_x + 1 > (rows - 1) or Map[avatars_x + 1][avatars_y] != '.') {
 				return;
 			}
 			else {
-				map[avatars_x][avatars_y] = '.';
+				Map[avatars_x][avatars_y] = '.';
 				avatar.move({ (unsigned int)(avatars_x + 1), (unsigned int)(avatars_y) });
 				avatars_x = avatar.getCoord().x;
 				avatars_y = avatar.getCoord().y;
-				map[avatars_x][avatars_y] = avatar.getName();
+				Map[avatars_x][avatars_y] = avatar.getName();
 			}
 		}
 		else if (keydown == key_D) {
-			if (avatars_y + 1 > (columns - 1) or map[avatars_x][avatars_y + 1] != '.') {
+			if (avatars_y + 1 > (columns - 1) or Map[avatars_x][avatars_y + 1] != '.') {
 				return;
 			}
 			else {
-				map[avatars_x][avatars_y] = '.';
+				Map[avatars_x][avatars_y] = '.';
 				avatar.move({ (unsigned int)(avatars_x), (unsigned int)(avatars_y + 1) });
 				avatars_x = avatar.getCoord().x;
 				avatars_y = avatar.getCoord().y;
-				map[avatars_x][avatars_y] = avatar.getName();
+				Map[avatars_x][avatars_y] = avatar.getName();
 			}
 		}
 		else if (keydown == key_A) {
-			if (avatars_y - 1 == 0 or map[avatars_x][avatars_y - 1] != '.') {
+			if (avatars_y - 1 == 0 or Map[avatars_x][avatars_y - 1] != '.') {
 				return;
 			}
 			else {
-				map[avatars_x][avatars_y] = '.';
+				Map[avatars_x][avatars_y] = '.';
 				avatar.move({ (unsigned int)(avatars_x), (unsigned int)(avatars_y - 1) });
 				avatars_x = avatar.getCoord().x;
 				avatars_y = avatar.getCoord().y;
-				map[avatars_x][avatars_y] = avatar.getName();
+				Map[avatars_x][avatars_y] = avatar.getName();
 			}
 		}
 		else if (keydown == key_E) {
 			bool team = avatar.getTeam();
-			if(avatar.getDayState() == true and team == false and avatar.getPotion() > 0) {
+			if (avatar.getDayState() == true and team == false and avatar.getPotions() > 0) {
 				for (int i = 0; i < vecV.size(); i++) {
 					if (vecV.at(i)[4] == true) {
-						vecV.fullHP(HP);
+						vecV.at(i).fullHP(HP);
 					}
-				}	
+				}
 			}
-			else if (team == true and avatar.getDayState() == false and avatar.getPotion() > 0) {
+			else if (team == true and avatar.getDayState() == false and avatar.getPotions() > 0) {
 				for (int i = 0; i < vecW.size(); i++) {
 					if (vecW.at(i)[4] == true) {
-						vecW.fullHP(HP);
+						vecW.at(i).fullHP(HP);
 					}
-				}	
+				}
 			}
 		}
 		current_tick = GetTickCount64();
