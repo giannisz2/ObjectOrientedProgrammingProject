@@ -55,6 +55,9 @@ public:
 	bool getDayState() {
 		return dayState;
 	}
+	void set_potion() {
+		numPotions += 1;
+	}
 
 	~Avatar() {};
 };
