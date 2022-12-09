@@ -12,6 +12,6 @@ bool chooseTeam();
 void placeHazards(char**, treeVector&, riverVector&, int, int);
 void placeCharacters(char**, warewolfVector&, vampireVector&, int, int);
 void pause(warewolfVector&, vampireVector&);
-void getActionAvatar(char**, Avatar, int, int);
+void getActionAvatar(char**, Avatar, int, int, int);
 void placePotions(char**, int, int);
-void moveCharacters(char**, warewolfVector&, vampireVector&, i
+void moveCharacters(char**, warewolfVector&, vampireVector&, i)
