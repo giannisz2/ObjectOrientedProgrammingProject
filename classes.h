@@ -55,6 +55,7 @@ public:
 	bool getDayState() {
 		return dayState;
 	}
+
 	void addPotion() {
 		numPotions += 1;
 	}
@@ -63,20 +64,20 @@ public:
 };
 
 class Monster : public Humanoid { // subclass that inherit Humanoid hyperclass
-	unsigned int HealthPoints; // m[0]
-	unsigned int numMeds; // m[1]
-	unsigned int strengthPoints; // m[2]
-	unsigned int defencePoints; // m[3]
+	int HealthPoints; // m[0]
+	int numMeds; // m[1]
+	int strengthPoints; // m[2]
+	int defencePoints; // m[3]
 	bool state = true; // true if alive, false if defeated. m[4]
 public:
-	Monster(Coordinates coord, unsigned int HP, unsigned int n_M, unsigned int str, unsigned int def) :
+	Monster(Coordinates coord, int HP, int n_M, int str, int def) :
 		Humanoid(coord), HealthPoints(HP), numMeds(n_M), strengthPoints(str), defencePoints(def) {};
 
 	void print() {
 		cout << point.x << point.y << HealthPoints << numMeds << strengthPoints << defencePoints << endl;
 	}
 
-	const unsigned int& operator [] (int x) { // operator overloading
+	const int& operator [] (int x) { // operator overloading
 		switch (x) {
 		case 0:
 			return HealthPoints;
@@ -95,21 +96,22 @@ public:
 			return 11; // error 
 		}
 	}
-	
-	void fullHP(unsigned int healthpoints) {
-		HealthPoints = healthpoints;
-	}
 
 	void changeState() {
 		state = false;
 	}
 
 	void loseHP(int n) {
-		HealthPoints -= n;
+		if (n > 0)
+			HealthPoints -= n;
 	}
 
 	void consumedMed() {
 		numMeds -= 1;
+	}
+
+	void fullHP(int HP) {
+		HealthPoints = HP;
 	}
 
 	~Monster() {};
@@ -118,7 +120,7 @@ public:
 class Vampire : public Monster {
 	char name = 'V';
 public:
-	Vampire(Coordinates coord, unsigned int HP, unsigned int n_M, unsigned int str, unsigned int def) :
+	Vampire(Coordinates coord, int HP, int n_M, int str, int def) :
 		Monster(coord, HP, n_M, str, def) {};
 
 	char getName() { 
@@ -133,7 +135,7 @@ public:
 class WareWolf : public Monster {
 	char name = 'W';
 public:
-	WareWolf(Coordinates coord, unsigned int HP, unsigned int n_M, unsigned int str, unsigned int def) :
+	WareWolf(Coordinates coord, int HP, int n_M, int str, int def) :
 		Monster(coord, HP, n_M, str, def) {};
 
 	char getName() { 
