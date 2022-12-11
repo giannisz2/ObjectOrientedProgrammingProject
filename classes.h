@@ -56,6 +56,10 @@ public:
 		return dayState;
 	}
 
+	void changeDayState() {
+		dayState = !dayState;
+	}
+
 	void addPotion() {
 		numPotions += 1;
 	}
