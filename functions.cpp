@@ -121,16 +121,16 @@ void placeCharacters(char** Map, warewolfVector& vecW, vampireVector& vecV, int 
 			
 		}
 
-		if (counter_V - vecV.size() != 0) {
+		/*if (counter_V - vecV.size() != 0) {
 				
 			Map[i][columns-1] = vecV.at(counter_V).getName();
 			counter_V++;
-		}
+		}*/
 	}
 }
 
 void getActionAvatar(char** Map, Avatar& avatar, warewolfVector& vecW, vampireVector& vecV, int rows, int columns, int HP) {
-	long current_tick, two_second_delay = (GetTickCount64() + 1000);
+	long current_tick, two_second_delay = (GetTickCount64());
 	char keydown = 'k';
 
 	do {
@@ -140,7 +140,7 @@ void getActionAvatar(char** Map, Avatar& avatar, warewolfVector& vecW, vampireVe
 		unsigned int avatars_x = avatar.getCoord().x;
 		unsigned int avatars_y = avatar.getCoord().y;
 		if (keydown == key_W) {
-			if (avatars_x - 1 < 0 or Map[avatars_x - 1][avatars_y] != '.') {
+			if (avatars_x - 1 <= 0 or Map[avatars_x - 1][avatars_y] != '.') { // if out of board, return
 				return;
 			}
 			if (Map[avatars_x - 1][avatars_y] == 'P') {
@@ -235,13 +235,16 @@ void moveWareWolves(char** Map, warewolfVector& vecW, vampireVector& vecV, int r
 	vector<WareWolf>::iterator itr;
 	for (itr = vecW.begin(); itr != vecW.end(); itr++) {
 
+		if (vecW.at(i)[4] == false) // if defeated, return
+			return;
+
 		Coordinates coord = { 0,0 };
 		unsigned int wolf_x = vecW.at(i).getCoord().x;
 		unsigned int wolf_y = vecW.at(i).getCoord().y;
 
 		int r = rand() % 4 + 1;
 		
-		switch (r) {
+		switch (r) { // choose next random movement
 		case 1:
 			coord = { wolf_x - 1,wolf_y };
 			break;
@@ -271,7 +274,7 @@ void moveWareWolves(char** Map, warewolfVector& vecW, vampireVector& vecV, int r
 			vector<Vampire>::iterator itr2;
 			for (itr2 = vecV.begin(); itr2 != vecV.end(); itr2++) {
 
-				if (vecV.at(j)[4] == false) // if vampire is defetaed get to next vampire
+				if (vecV.at(j)[4] == false) // if vampire is defetead get to next vampire
 					continue;
 
 				unsigned int vamp_x = vecV.at(j).getCoord().x;
@@ -283,7 +286,7 @@ void moveWareWolves(char** Map, warewolfVector& vecW, vampireVector& vecV, int r
 
 				else {
 
-					if (vecW.at(i)[2] >= vecV.at(j)[2]) { // if wolf strenght is higher or equal to vamp 
+					if (vecW.at(i)[2] >= vecV.at(j)[2]) { // if wolf strengh is higher or equal to vamp 
 						int diff = vecW.at(i)[2] - vecV.at(j)[3]; // difference of their HP
 						vecV.at(j).loseHP(diff);
 						if (diff < 0) break; // if defense is higher than strengh
@@ -295,7 +298,7 @@ void moveWareWolves(char** Map, warewolfVector& vecW, vampireVector& vecV, int r
 							break;
 						}
 					}
-					else {
+					else { // if strengh is lower move away. We check boundaries in this portion
 						if (vecW.at(i).getCoord().x + 1 == '.' and vecW.at(i).getCoord().x + 1 < rows) {
 							Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y] = '.';
 							vecW.at(i).move({ vecW.at(i).getCoord().x + 1 , vecW.at(i).getCoord().y });
@@ -329,7 +332,9 @@ void moveWareWolves(char** Map, warewolfVector& vecW, vampireVector& vecV, int r
 			vector<WareWolf>::iterator itr3;
 			int k = 0;
 			for (itr3 = vecW.begin(); itr3 != vecW.end(); itr3++) {
-				if (coord.x != vecW.at(k).getCoord().x or coord.y != vecW.at(k).getCoord().y or vecW.at(i) == vecW.at(k)) // == operator is overloaded
+				if (coord.x != vecW.at(k).getCoord().x or coord.y != vecW.at(k).getCoord().y or vecW.at(i) == vecW.at(k)) 
+					// == operator is overloaded,we basically check their coordinates and 
+					// we don't want to heal the object itself, so we get the same in the loop then continue
 					continue;
 				if (vecW.at(k)[0] < HP and vecW.at(i)[1] > 0) {
 					vecW.at(k).heal();
@@ -348,6 +353,9 @@ void moveVampires(char** Map, warewolfVector& vecW, vampireVector& vecV, int row
 
 	vector<Vampire>::iterator itr;
 	for (itr = vecV.begin(); itr != vecV.end(); itr++) {
+
+		if (vecV.at(i)[4] == false)
+			return;
 
 		Coordinates coord = { 0,0 };
 		unsigned int vamp_x = vecV.at(i).getCoord().x;
