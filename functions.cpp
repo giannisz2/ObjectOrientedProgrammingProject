@@ -29,8 +29,6 @@ char** mapCreate(int rows, int columns) {
 
 
 
-
-
 void printMap(char** Map, int rows, int columns) {
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < columns; j++) {
@@ -39,8 +37,6 @@ void printMap(char** Map, int rows, int columns) {
 		cout << endl;
 	}
 }
-
-
 
 
 
@@ -65,8 +61,6 @@ bool chooseTeam() {
 
 	return t;
 }
-
-
 
 
 
@@ -113,8 +107,6 @@ void placeHazards(char** Map, treeVector& vecT, riverVector& vecR, int rows, int
 
 
 
-
-
 void placeCharacters(char** Map, warewolfVector& vecW, vampireVector& vecV, int rows, int columns) {
 
 	int counter_W = 0;
@@ -137,14 +129,10 @@ void placeCharacters(char** Map, warewolfVector& vecW, vampireVector& vecV, int 
 	}
 }
 
-
-
-
-
 void getActionAvatar(char** Map, Avatar& avatar, warewolfVector& vecW, vampireVector& vecV, int rows, int columns, int HP) {
-	long current_tick, two_second_delay = (GetTickCount64() + 5000);
+	long current_tick, two_second_delay = (GetTickCount64() + 1000);
 	char keydown = 'k';
-	printMap(Map, rows, columns);
+
 	do {
 		if (_kbhit()) {
 			keydown = _getch();
@@ -152,10 +140,10 @@ void getActionAvatar(char** Map, Avatar& avatar, warewolfVector& vecW, vampireVe
 		unsigned int avatars_x = avatar.getCoord().x;
 		unsigned int avatars_y = avatar.getCoord().y;
 		if (keydown == key_W) {
-			if (avatars_x - 1 == -1 or Map[avatars_x - 1][avatars_y] != '.') {
+			if (avatars_x - 1 < 0 or Map[avatars_x - 1][avatars_y] != '.') {
 				return;
 			}
-			if(Map[avatars_x - 1][avatars_y] == 'P') {
+			if (Map[avatars_x - 1][avatars_y] == 'P') {
 				Map[avatars_x - 1][avatars_y] = '.';
 				avatar.addPotion();
 			}
@@ -171,8 +159,8 @@ void getActionAvatar(char** Map, Avatar& avatar, warewolfVector& vecW, vampireVe
 			if (avatars_x + 1 > (rows - 1) or Map[avatars_x + 1][avatars_y] != '.') {
 				return;
 			}
-			if(Map[avatars_x + 1][avatars_y] == 'P') {
-				Map[avatars_x - 1][avatars_y] = '.';
+			if (Map[avatars_x + 1][avatars_y] == 'P') {
+				Map[avatars_x + 1][avatars_y] = '.';
 				avatar.addPotion();
 			}
 			else {
@@ -187,8 +175,8 @@ void getActionAvatar(char** Map, Avatar& avatar, warewolfVector& vecW, vampireVe
 			if (avatars_y + 1 > (columns - 1) or Map[avatars_x][avatars_y + 1] != '.') {
 				return;
 			}
-			if(Map[avatars_x][avatars_y + 1] == 'P') {
-				Map[avatars_x - 1][avatars_y] = '.';
+			if (Map[avatars_x][avatars_y + 1] == 'P') {
+				Map[avatars_x][avatars_y + 1] = '.';
 				avatar.addPotion();
 			}
 			else {
@@ -200,11 +188,11 @@ void getActionAvatar(char** Map, Avatar& avatar, warewolfVector& vecW, vampireVe
 			}
 		}
 		else if (keydown == key_A) {
-			if (avatars_y - 1 == 0 or Map[avatars_x][avatars_y - 1] != '.') {
+			if (avatars_y - 1 < 0 or Map[avatars_x][avatars_y - 1] != '.') {
 				return;
 			}
-			if(Map[avatars_x][avatars_y - 1] == 'P') {
-				Map[avatars_x - 1][avatars_y] = '.';
+			if (Map[avatars_x][avatars_y - 1] == 'P') {
+				Map[avatars_x][avatars_y - 1] = '.';
 				avatar.addPotion();
 			}
 			else {
@@ -240,10 +228,7 @@ void getActionAvatar(char** Map, Avatar& avatar, warewolfVector& vecW, vampireVe
 	}
 }
 
-
-
-
-void moveWareWolves(char** Map, warewolfVector& vecW, vampireVector& vecV int rows, int columns) {
+void moveWareWolves(char** Map, warewolfVector& vecW, vampireVector& vecV, int rows, int columns, int HP) {
 	srand(time(NULL));
 	int i = 0;
 	
@@ -286,91 +271,224 @@ void moveWareWolves(char** Map, warewolfVector& vecW, vampireVector& vecV int ro
 			vector<Vampire>::iterator itr2;
 			for (itr2 = vecV.begin(); itr2 != vecV.end(); itr2++) {
 
-				if (vecV.at(j)[4] != false) {
-					unsigned int vamp_x = vecV.at(j).getCoord().x;
-					unsigned int vamp_y = vecV.at(j).getCoord().y;
+				if (vecV.at(j)[4] == false) // if vampire is defetaed get to next vampire
+					continue;
 
-					if (wolf_x != vamp_x or wolf_y != vamp_y) {
-						continue;
-					}
+				unsigned int vamp_x = vecV.at(j).getCoord().x;
+				unsigned int vamp_y = vecV.at(j).getCoord().y;
 
-					else {
+				if (wolf_x != vamp_x or wolf_y != vamp_y) {
+					continue;
+				}
 
-						if (vecW.at(i)[2] >= vecV.at(j)[2]) { // if wolf strenght is higher or equal to vamp 
-							int diff = vecW.at(i)[2] - vecV.at(j)[3];
-							vecV.at(j).loseHP(diff);
-							if (diff < 0) break;
-							else {
-								if (vecV.at(j)[0] <= 0) {
-									Map[vamp_x][vamp_y] = '.';
-									vecV.at(j).changeState();	
-								}
-								break;
-							}
-						}
+				else {
+
+					if (vecW.at(i)[2] >= vecV.at(j)[2]) { // if wolf strenght is higher or equal to vamp 
+						int diff = vecW.at(i)[2] - vecV.at(j)[3]; // difference of their HP
+						vecV.at(j).loseHP(diff);
+						if (diff < 0) break; // if defense is higher than strengh
 						else {
-							if (vecW.at(i).getCoord().x + 1 == '.' and vecW.at(i).getCoord().x + 1 < rows) {
-								Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y] = '.';
-								vecW.at(i).move({ vecW.at(i).getCoord().x + 1 , vecW.at(i).getCoord().y });
-								Map[vecW.at(i).getCoord().x + 1][vecW.at(i).getCoord().y] = vecW.at(i).getName();
-								break;
+							if (vecV.at(j)[0] <= 0) {
+								Map[vamp_x][vamp_y] = '.';
+								vecV.at(j).changeState();	
 							}
-							else if (vecW.at(i).getCoord().x - 1 == '.' and vecW.at(i).getCoord().x - 1 >= 0) {
-								Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y] = '.';
-								vecW.at(i).move({ vecW.at(i).getCoord().x - 1 , vecW.at(i).getCoord().y });
-								Map[vecW.at(i).getCoord().x - 1][vecW.at(i).getCoord().y] = vecW.at(i).getName();
-								break;
-							}
-							else if (vecW.at(i).getCoord().y + 1 == '.' and vecW.at(i).getCoord().y + 1 < columns) {
-								Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y] = '.';
-								vecW.at(i).move({ vecW.at(i).getCoord().x , vecW.at(i).getCoord().y + 1 });
-								Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y + 1] = vecW.at(i).getName();
-								break;
-							}
-							else if (vecW.at(i).getCoord().y - 1 == '.' and vecW.at(i).getCoord().y - 1 >= 0) {
-								Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y] = '.';
-								vecW.at(i).move({ vecW.at(i).getCoord().x , vecW.at(i).getCoord().y - 1 });
-								Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y - 1] = vecW.at(i).getName();
-								break;
-							}
+							break;
+						}
+					}
+					else {
+						if (vecW.at(i).getCoord().x + 1 == '.' and vecW.at(i).getCoord().x + 1 < rows) {
+							Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y] = '.';
+							vecW.at(i).move({ vecW.at(i).getCoord().x + 1 , vecW.at(i).getCoord().y });
+							Map[vecW.at(i).getCoord().x + 1][vecW.at(i).getCoord().y] = vecW.at(i).getName();
+							break;
+						}
+						else if (vecW.at(i).getCoord().x - 1 == '.' and vecW.at(i).getCoord().x - 1 >= 0) {
+							Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y] = '.';
+							vecW.at(i).move({ vecW.at(i).getCoord().x - 1 , vecW.at(i).getCoord().y });
+							Map[vecW.at(i).getCoord().x - 1][vecW.at(i).getCoord().y] = vecW.at(i).getName();
+							break;
+						}
+						else if (vecW.at(i).getCoord().y + 1 == '.' and vecW.at(i).getCoord().y + 1 < columns) {
+							Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y] = '.';
+							vecW.at(i).move({ vecW.at(i).getCoord().x , vecW.at(i).getCoord().y + 1 });
+							Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y + 1] = vecW.at(i).getName();
+							break;
+						}
+						else if (vecW.at(i).getCoord().y - 1 == '.' and vecW.at(i).getCoord().y - 1 >= 0) {
+							Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y] = '.';
+							vecW.at(i).move({ vecW.at(i).getCoord().x , vecW.at(i).getCoord().y - 1 });
+							Map[vecW.at(i).getCoord().x][vecW.at(i).getCoord().y - 1] = vecW.at(i).getName();
+							break;
 						}
 					}
 				}
 			}
 			j++;
 		}
-		/*else if (Map[coord.x][coord.y] == 'W') {
-
-
-		}*/
+		else if (Map[coord.x][coord.y] == 'W') {
+			vector<WareWolf>::iterator itr3;
+			int k = 0;
+			for (itr3 = vecW.begin(); itr3 != vecW.end(); itr3++) {
+				if (coord.x != vecW.at(k).getCoord().x or coord.y != vecW.at(k).getCoord().y or vecW.at(i) == vecW.at(k)) // == operator is overloaded
+					continue;
+				if (vecW.at(k)[0] < HP and vecW.at(i)[1] > 0) {
+					vecW.at(k).heal();
+					vecW.at(i).consumedMed();
+				}
+				k++;
+			}
+		}
 		i++;
 	}
 }
 
+void moveVampires(char** Map, warewolfVector& vecW, vampireVector& vecV, int rows, int columns, int HP) {
+	srand(time(NULL));
+	int i = 0;
 
+	vector<Vampire>::iterator itr;
+	for (itr = vecV.begin(); itr != vecV.end(); itr++) {
+
+		Coordinates coord = { 0,0 };
+		unsigned int vamp_x = vecV.at(i).getCoord().x;
+		unsigned int vamp_y = vecV.at(i).getCoord().y;
+
+		int r = rand() % 8 + 1;
+
+		switch (r) {
+		case 1:
+			coord = { vamp_x - 1,vamp_y };
+			break;
+		case 2:
+			coord = { vamp_x + 1,vamp_y };
+			break;
+		case 3:
+			coord = { vamp_x,vamp_y - 1 };
+			break;
+		case 4:
+			coord = { vamp_x,vamp_y + 1 };
+		case 5:
+			coord = { vamp_x - 1, vamp_y - 1 };
+		case 6:
+			coord = { vamp_x - 1, vamp_y + 1 };
+		case 7:
+			coord = { vamp_x + 1, vamp_y - 1 };
+		case 8:
+			coord = { vamp_x + 1, vamp_y + 1 };
+		}
+
+		if (coord.x < 0 or coord.x >= rows or coord.y < 0 or coord.y >= columns) {
+			return;
+		}
+
+		if (Map[coord.x][coord.y] == '.') {
+			Map[vecV.at(i).getCoord().x][vecV.at(i).getCoord().y] = '.';
+			vecV.at(i).move(coord);
+			Map[coord.x][coord.y] = vecV.at(i).getName();
+
+		}
+
+		else if (Map[coord.x][coord.y] == 'W') {
+			int j = 0;
+			vector<WareWolf>::iterator itr2;
+			for (itr2 = vecW.begin(); itr2 != vecW.end(); itr2++) {
+
+				if (vecW.at(j)[4] == false) // if vampire is defetaed get to next vampire
+					continue;
+
+				unsigned int wolf_x = vecW.at(j).getCoord().x;
+				unsigned int wolf_y = vecW.at(j).getCoord().y;
+
+				if (vamp_x != wolf_x or vamp_y != wolf_y) {
+					continue;
+				}
+
+				else {
+
+					if (vecV.at(i)[2] >= vecW.at(j)[2]) { // if wolf strenght is higher or equal to vamp 
+						int diff = vecV.at(i)[2] - vecW.at(j)[3]; // difference of their HP
+						vecW.at(j).loseHP(diff);
+						if (diff < 0) break; // if defense is higher than strengh
+						else {
+							if (vecW.at(j)[0] <= 0) {
+								Map[wolf_x][wolf_y] = '.';
+								vecW.at(j).changeState();
+							}
+							break;
+						}
+					}
+					else {
+						if (vecV.at(i).getCoord().x + 1 == '.' and vecV.at(i).getCoord().x + 1 < rows) {
+							Map[vecV.at(i).getCoord().x][vecV.at(i).getCoord().y] = '.';
+							vecV.at(i).move({ vecV.at(i).getCoord().x + 1 , vecV.at(i).getCoord().y });
+							Map[vecV.at(i).getCoord().x + 1][vecV.at(i).getCoord().y] = vecV.at(i).getName();
+							break;
+						}
+						else if (vecV.at(i).getCoord().x - 1 == '.' and vecV.at(i).getCoord().x - 1 >= 0) {
+							Map[vecV.at(i).getCoord().x][vecV.at(i).getCoord().y] = '.';
+							vecV.at(i).move({ vecV.at(i).getCoord().x - 1 , vecV.at(i).getCoord().y });
+							Map[vecV.at(i).getCoord().x - 1][vecV.at(i).getCoord().y] = vecV.at(i).getName();
+							break;
+						}
+						else if (vecV.at(i).getCoord().y + 1 == '.' and vecV.at(i).getCoord().y + 1 < columns) {
+							Map[vecV.at(i).getCoord().x][vecV.at(i).getCoord().y] = '.';
+							vecV.at(i).move({ vecV.at(i).getCoord().x , vecV.at(i).getCoord().y + 1 });
+							Map[vecV.at(i).getCoord().x][vecV.at(i).getCoord().y + 1] = vecV.at(i).getName();
+							break;
+						}
+						else if (vecV.at(i).getCoord().y - 1 == '.' and vecV.at(i).getCoord().y - 1 >= 0) {
+							Map[vecV.at(i).getCoord().x][vecV.at(i).getCoord().y] = '.';
+							vecV.at(i).move({ vecV.at(i).getCoord().x , vecV.at(i).getCoord().y - 1 });
+							Map[vecV.at(i).getCoord().x][vecV.at(i).getCoord().y - 1] = vecV.at(i).getName();
+							break;
+						}
+					}
+				}
+			}
+			j++;
+		}
+		else if (Map[coord.x][coord.y] == 'W') {
+			vector<Vampire>::iterator itr3;
+			int k = 0;
+			for (itr3 = vecV.begin(); itr3 != vecV.end(); itr3++) {
+				if (coord.x != vecV.at(k).getCoord().x or coord.y != vecV.at(k).getCoord().y or vecV.at(i) == vecV.at(k)) // == operator is overloaded
+					continue;
+				if (vecV.at(k)[0] < HP and vecV.at(i)[1] > 0) {
+					vecV.at(k).heal();
+					vecV.at(i).consumedMed();
+				}
+				k++;
+			}
+		}
+		i++;
+	}
+}
 
 void placePotion(char** Map, Avatar& avatar, int rows, int columns) {
-	bool put_potion = false;
-	while (put_potion == false and avatar.getPotions() > 0 and  avatar.getPotions() < 3) {
+	
+	while (1) {
 		unsigned int x = rand() % (rows - 1) + 1;
 		unsigned int y = rand() % (columns - 1) + 1;
 		if (Map[x][y] == '.') {
-			Potion potion({x, y});
+			Potion potion({ x, y });
 			Map[x][y] = potion.getName();
-			put_potion = true;
+			break;
 		}
 	}
-	return;
+	
 }
 
-
-
-
-void pause(Avatar avatar, warewolfVector& vecW, vampireVector& vecV) {
+void pause(Avatar avatar, warewolfVector& vecW, vampireVector& vecV, bool team) {
 
 	system("cls");
 	int defeatedWarewolves = 0;
 	int defeatedVampires = 0;
+
+	if(team)
+		cout << "You support: " << "Warewolves." << endl << endl;
+	else 
+		cout << "You support: " << "Vampires." << endl << endl;
+
 
 	for (int i = 0; i < vecW.size(); i++) {
 		WareWolf wolf = vecW.at(i);
@@ -408,7 +526,7 @@ void pause(Avatar avatar, warewolfVector& vecW, vampireVector& vecV) {
 	else if (defeatedVampires > defeatedWarewolves) {
 		cout << "The warewolves are winning." << endl;
 	}
-	
+
 	cout << endl;
 	if (avatar.getDayState() == true)
 		cout << "It's day" << endl;
