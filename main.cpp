@@ -32,6 +32,8 @@ int main() {
 
 	bool team = chooseTeam(); // function to choose team
 
+	//                 ** INITIALIZE MAP STATE**                       //
+	
 	// those types are included in types.h file 
 	warewolfVector vecW;
 	vampireVector vecV;
@@ -40,13 +42,13 @@ int main() {
 
 	srand((unsigned)time(NULL)); // give rand() seed
 
-	int HP = rand() % (10 - 5 + 1) + 5; // get number bewteen 5 and 10
+	int HP = 1; //rand() % (10 - 5 + 1) + 5; // get number bewteen 5 and 10
 
 	for (unsigned int i = 0; i < rows; i++) { // get numbers between intervals using specific formula
-		WareWolf wolf({ i,0 }, HP, (rand() % (2 - 0 + 1) + 0), (rand() % (3 - 1 + 1) + 1), (rand() % (2 - 1 + 1) + 1));
+		WareWolf wolf({ i,0 }, HP, (rand() % (2 - 0 + 1) + 0), 3 /*(rand() % (3 - 1 + 1) + 1)*/, 0/*(rand() % (2 - 1 + 1) + 1)*/);
 		vecW.push_back(wolf);
 
-		Vampire vamp({ i,columns - 2 }, HP, (rand() % (2 - 0 + 1) + 0), (rand() % (3 - 1 + 1) + 1), (rand() % (2 - 1 + 1) + 1));
+		Vampire vamp({ i,columns - 2 }, HP, (rand() % (2 - 0 + 1) + 0), 3 /*(rand() % (3 - 1 + 1) + 1)*/, 0/*(rand() % (2 - 1 + 1) + 1)*/);
 		vecV.push_back(vamp);
 
 	}
@@ -68,7 +70,8 @@ int main() {
 
 	placeCharacters(Map, vecW, vecV, rows, columns);
 
-	// main loop
+	//**  MAIN LOOP **//
+
 	while (vecW.size() >= 0 or vecV.size() >= 0) {
 
 		// if player presses M the game is over, this code is a trick to set time
@@ -119,9 +122,10 @@ int main() {
 		/*if(avatar.getPotions() <= 2)
 			placePotion(Map, avatar, rows, columns);*/
 
+		if (rand() % 2 == 0) {
+			avatar.changeDayState();
+		}
+
 	}
-
-
-	
 
 }
