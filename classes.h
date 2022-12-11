@@ -30,7 +30,7 @@ public:
 
 class Avatar : public Humanoid {
 	char name = 'A';
-	bool team = false; // true werewolves, false vampires
+	bool team; // true werewolves, false vampires
 	int numPotions = 1;
 	bool dayState = true; // true day, false night
 public:
@@ -97,8 +97,14 @@ public:
 		}
 	}
 
-	void changeState() {
-		state = false;
+	const bool& operator == (Monster mon) {
+		if (point.x == mon.getCoord().x and point.y == mon.getCoord().y)
+			return true;
+		return false;
+	}
+
+	void fullHP(int HP) {
+		HealthPoints = HP;
 	}
 
 	void loseHP(int n) {
@@ -106,12 +112,16 @@ public:
 			HealthPoints -= n;
 	}
 
+	void heal() {
+		HealthPoints += 1;
+	}
+
 	void consumedMed() {
 		numMeds -= 1;
 	}
-
-	void fullHP(int HP) {
-		HealthPoints = HP;
+	
+	void changeState() {
+		state = false;
 	}
 
 	~Monster() {};
