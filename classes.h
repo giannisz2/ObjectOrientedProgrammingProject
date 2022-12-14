@@ -63,6 +63,10 @@ public:
 	void addPotion() {
 		numPotions += 1;
 	}
+	
+	void removePotion() {
+		numPotions -= 1;
+	}
 
 	~Avatar() {};
 };
@@ -203,10 +207,15 @@ public:
 	~River() {};
 };
 
-class Potion : public Terrain {
+class Potion {
 	char name = 'P';
+	Coordinates point;
 public:
-	Potion(Coordinates coord) : Terrain(coord) {};
+	Potion(Coordinates coord) : point(coord) {};
+
+	Coordinates getCoord() const {
+		return point;
+	}
 
 	char getName() {
 		return name;
