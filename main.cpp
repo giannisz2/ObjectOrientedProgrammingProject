@@ -23,7 +23,7 @@ int main() {
 
 	cout << "Give size of map which will be N x N ( N >= 5 )." << endl;
 	cin >> rows >> columns;
-	while (rows != columns and rows < 5 and columns < 5) {
+	while (rows != columns and rows < 5 and columns < 5) { // error 
 		cout << "Only N x N is allowed." << endl;
 		cin >> rows >> columns;
 	}
@@ -33,7 +33,7 @@ int main() {
 	bool team = chooseTeam(); // function to choose team
 
 	//                 ** INITIALIZE MAP STATE**                       //
-	
+
 	// those types are included in types.h file 
 	warewolfVector vecW;
 	vampireVector vecV;
@@ -48,18 +48,18 @@ int main() {
 		WareWolf wolf({ i,0 }, HP, (rand() % (2 - 0 + 1) + 0), 3 /*(rand() % (3 - 1 + 1) + 1)*/, 0/*(rand() % (2 - 1 + 1) + 1)*/);
 		vecW.push_back(wolf);
 
-		Vampire vamp({ i,columns - 2 }, HP, (rand() % (2 - 0 + 1) + 0), 3 /*(rand() % (3 - 1 + 1) + 1)*/, 0/*(rand() % (2 - 1 + 1) + 1)*/);
+		Vampire vamp({ i,columns - 1 }, HP, (rand() % (2 - 0 + 1) + 0), 3 /*(rand() % (3 - 1 + 1) + 1)*/, 0/*(rand() % (2 - 1 + 1) + 1)*/);
 		vecV.push_back(vamp);
 
 	}
 
-	for (unsigned int i = 0; i < (rows*columns)/5; i++) {
-		Tree tree({ rand() % (rows - 1) + 1, rand() % (columns - 2) + 2});
-		// we restrict the placement to not collied with avatar
+	for (unsigned int i = 0; i < (rows * columns) / 5; i++) {
+		Tree tree({ rand() % (rows - 1) + 1, rand() % (columns - 2) + 2 });
+		// we restrict the placement to not collide with avatar
 		vecT.push_back(tree);
 
-		River river({ rand() % (rows - 1) + 1, rand() % (columns - 2) + 2});
-		// we restrict the placement to not collied with avatar
+		River river({ rand() % (rows - 1) + 1, rand() % (columns - 2) + 2 });
+		// we restrict the placement to not collide with avatar
 		vecR.push_back(river);
 	}
 
@@ -72,9 +72,10 @@ int main() {
 
 	//**  MAIN LOOP **//
 
-	while (vecW.size() >= 0 or vecV.size() >= 0) {
+	while (vecW.size() > 0 and vecV.size() > 0) {
 
-		// if player presses M the game is over, this code is a trick to set time
+		// if player presses M the game is over, and if he presses P, the game is
+		// paused. This code is a trick to set time
 		// limit to function _getch() so when the player doesn't give input,
 		// the game doesn't have to stop
 		long current_tick, two_second_delay = (GetTickCount64() + 300);
@@ -92,26 +93,14 @@ int main() {
 				return 0;
 			}
 
-			current_tick = GetTickCount64();
-		} while (current_tick < two_second_delay && keydown == 'k');
-
-		//same here
-		current_tick, two_second_delay = (GetTickCount64() + 300);
-
-		do {
-			system("cls");
-			printMap(Map, rows, columns);
-			if (_kbhit()) {
-				keydown = _getch();
-			}
-
 			if (keydown == key_P) {
 				pause(avatar, vecW, vecV, team);
 			}
 
 			current_tick = GetTickCount64();
 		} while (current_tick < two_second_delay && keydown == 'k');
-		
+
+
 		system("cls");
 
 		printMap(Map, rows, columns);
@@ -119,13 +108,20 @@ int main() {
 		moveWareWolves(Map, vecW, vecV, rows, columns, HP);
 		moveVampires(Map, vecW, vecV, rows, columns, HP);
 
-		/*if(avatar.getPotions() <= 2)
-			placePotion(Map, avatar, rows, columns);*/
+		if(avatar.getPotions() < 2 and avatar.getPickUpState() == false)
+			placePotion(Map, avatar, rows, columns);
 
 		if (rand() % 2 == 0) {
 			avatar.changeDayState();
 		}
 
+		
 	}
 
+	if ((vecW.size() > 0 and team == true) or (vecV.size() > 0 and team == false)) {
+		cout << "Your team won!" << endl;
+	}
+	else if ((vecW.size() > 0 and team == false) or (vecV.size() > 0 and team == true)) {
+		cout << "Your team lost..." << endl;
+	}
 }
