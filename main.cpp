@@ -124,4 +124,9 @@ int main() {
 	else if ((vecW.size() > 0 and team == false) or (vecV.size() > 0 and team == true)) {
 		cout << "Your team lost..." << endl;
 	}
+	
+	vecV.clear();
+	vecW.clear();
+	
+	return 0;
 }
