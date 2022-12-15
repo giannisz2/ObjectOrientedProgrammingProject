@@ -70,7 +70,7 @@ public:
 	}
 
 	void pickUpPotion() { 
-		// when we pick up a potion pickUp variable will become true,
+		// when we pick up a potion the pickUp variable will become true,
 		// if it's true, then potion will NOT be placed in main loop
 		// but when avatar uses a potion then it will become false again
 		// so placePotion() will put another potion in map
