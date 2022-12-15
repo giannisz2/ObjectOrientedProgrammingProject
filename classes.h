@@ -16,11 +16,11 @@ protected:
 public:
 	Humanoid(Coordinates coord) : point(coord) {};
 
-	void move(Coordinates new_point) {
+	void move(Coordinates new_point) { // main move function
 		point = new_point;
 	}
 
-	Coordinates getCoord() const {
+	Coordinates getCoord() const { // return coordinates
 		return point;
 	}
 
@@ -32,11 +32,12 @@ class Avatar : public Humanoid {
 	char name = 'A';
 	bool team; // true werewolves, false vampires
 	int numPotions = 1;
+	bool pickUp = false;
 	bool dayState = true; // true day, false night
 public:
 	Avatar(Coordinates coord, bool t, int n_P, bool day) : Humanoid(coord), team(t), numPotions(n_P), dayState(day) {};
 
-	void print() {
+	void print() { // for debug purpose
 		cout << point.x << " " << point.y << " " << team << " " << numPotions << endl;
 	}
 
@@ -48,24 +49,36 @@ public:
 		return numPotions;
 	}
 
-	char getName() {
+	char getName() const{
 		return name;
 	}
 
-	bool getDayState() {
+	bool getDayState() const{
 		return dayState;
 	}
 
 	void changeDayState() {
-		dayState = !dayState;
+		dayState = !dayState; 
 	}
 
 	void addPotion() {
 		numPotions += 1;
 	}
-	
+
 	void removePotion() {
 		numPotions -= 1;
+	}
+
+	void pickUpPotion() { 
+		// when we pick up a potion this function will become true,
+		// if it's true, then potion will NOT be placed in main loop
+		// but when avatar uses a potion then it will become false again
+		// so placePotion() will put another potion in map
+		pickUp = !pickUp;
+	}
+
+	bool getPickUpState() {
+		return pickUp;
 	}
 
 	~Avatar() {};
@@ -81,11 +94,11 @@ public:
 	Monster(Coordinates coord, int HP, int n_M, int str, int def) :
 		Humanoid(coord), HealthPoints(HP), numMeds(n_M), strengthPoints(str), defencePoints(def) {};
 
-	void print() {
+	void print() { // for debuf purpose
 		cout << point.x << point.y << HealthPoints << numMeds << strengthPoints << defencePoints << endl;
 	}
 
-	const int& operator [] (int x) { // operator overloading
+	const int& operator [] (int x) { // operator [] overloading
 		switch (x) {
 		case 0:
 			return HealthPoints;
@@ -98,17 +111,20 @@ public:
 			break;
 		case 3:
 			return defencePoints;
-		case 4:
-			return state;
 		default:
 			return 11; // error 
 		}
 	}
 
-	const bool& operator == (Monster mon) {
+	const bool& operator == (Monster mon) { // operator == overloading, 
+		//compares 2 objects based on their coordinates. If same, then it's the object itself
 		if (point.x == mon.getCoord().x and point.y == mon.getCoord().y)
 			return true;
 		return false;
+	}
+
+	bool getState() const {
+		return state;
 	}
 
 	void fullHP(int HP) {
@@ -127,7 +143,7 @@ public:
 	void consumedMed() {
 		numMeds -= 1;
 	}
-	
+
 	void changeState() {
 		state = false;
 	}
@@ -141,7 +157,7 @@ public:
 	Vampire(Coordinates coord, int HP, int n_M, int str, int def) :
 		Monster(coord, HP, n_M, str, def) {};
 
-	char getName() { 
+	char getName() {
 		return name;
 	}
 
@@ -156,7 +172,7 @@ public:
 	WareWolf(Coordinates coord, int HP, int n_M, int str, int def) :
 		Monster(coord, HP, n_M, str, def) {};
 
-	char getName() { 
+	char getName() {
 		return name;
 	}
 
@@ -211,13 +227,16 @@ class Potion {
 	char name = 'P';
 	Coordinates point;
 public:
-	Potion(Coordinates coord) : point(coord) {};
+
+	Potion(Coordinates coord) {
+		point = coord;
+	};
 
 	Coordinates getCoord() const {
 		return point;
 	}
 
-	char getName() {
+	char getName() const{
 		return name;
 	}
 
