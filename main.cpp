@@ -2,7 +2,6 @@
 #include <vector>
 #include <typeinfo>
 #include <cstdlib>
-#include <thread>
 
 #include <windows.h>
 #include <time.h>
@@ -18,6 +17,12 @@
 using namespace std;
 
 int main() {
+
+	cout << "UP W   DOWN S   RIGHT D   LEFT A " << endl
+		<< "PAUSE P    HEAL E   EXIT M" << endl
+		<< "ONLY CAPITAL LETTERS WORK!!!" << endl;
+	system("pause");
+	system("cls");
 
 	unsigned int rows, columns; // Size of map
 
@@ -42,13 +47,13 @@ int main() {
 
 	srand((unsigned)time(NULL)); // give rand() seed
 
-	int HP = 1; //rand() % (10 - 5 + 1) + 5; // get number bewteen 5 and 10
+	int HP = rand() % (10 - 5 + 1) + 5; // get number bewteen 5 and 10
 
 	for (unsigned int i = 0; i < rows; i++) { // get numbers between intervals using specific formula
-		WareWolf wolf({ i,0 }, HP, (rand() % (2 - 0 + 1) + 0), 3 /*(rand() % (3 - 1 + 1) + 1)*/, 0/*(rand() % (2 - 1 + 1) + 1)*/);
+		WareWolf wolf({ i,0 }, HP, (rand() % (2 - 0 + 1) + 0), (rand() % (3 - 1 + 1) + 1), (rand() % (2 - 1 + 1) + 1));
 		vecW.push_back(wolf);
 
-		Vampire vamp({ i,columns - 1 }, HP, (rand() % (2 - 0 + 1) + 0), 3 /*(rand() % (3 - 1 + 1) + 1)*/, 0/*(rand() % (2 - 1 + 1) + 1)*/);
+		Vampire vamp({ i,columns - 1 }, HP, (rand() % (2 - 0 + 1) + 0), (rand() % (3 - 1 + 1) + 1), (rand() % (2 - 1 + 1) + 1));
 		vecV.push_back(vamp);
 
 	}
@@ -72,13 +77,38 @@ int main() {
 
 	//**  MAIN LOOP **//
 
-	while (vecW.size() > 0 and vecV.size() > 0) {
+	bool warewolvesWon = false;
+	bool vampiresWon = false;
+
+	while (1) {
+
+		int countDefWw = 0;
+		for (warewolfVector::iterator wolf = vecW.begin(); wolf != vecW.end(); wolf++) {
+			if (wolf->getState() == false)// count the warewols that are defeated
+				countDefWw += 1;
+		}
+
+		int countDefVp = 0;
+		for (vampireVector::iterator vamp = vecV.begin(); vamp != vecV.end(); vamp++) {
+			if (vamp->getState() == false) // count those vampires that are defeated
+				countDefVp += 1;
+
+		}
+
+		// flag so we can know who won
+		if (countDefWw == vecW.size() - 1) {
+			vampiresWon = true;
+			break;
+		}else if(countDefVp == vecV.size() - 1) {
+			warewolvesWon = true;
+			break;
+		}
 
 		// if player presses M the game is over, and if he presses P, the game is
 		// paused. This code is a trick to set time
 		// limit to function _getch() so when the player doesn't give input,
 		// the game doesn't have to stop
-		long current_tick, two_second_delay = (GetTickCount64() + 300);
+		long current_tick, two_second_delay = (GetTickCount64() + 200);
 		char keydown = 'k';
 
 		do {
@@ -111,22 +141,22 @@ int main() {
 		if(avatar.getPotions() < 2 and avatar.getPickUpState() == false)
 			placePotion(Map, avatar, rows, columns);
 
-		if (rand() % 2 == 0) {
+		if (rand() % 2 == 0) { // randomly change day
 			avatar.changeDayState();
 		}
 
 		
 	}
 
-	if ((vecW.size() > 0 and team == true) or (vecV.size() > 0 and team == false)) {
+	if ((team == true and warewolvesWon == true) or (team == false and vampiresWon == true)) {
 		cout << "Your team won!" << endl;
 	}
-	else if ((vecW.size() > 0 and team == false) or (vecV.size() > 0 and team == true)) {
+	else if ((team == false and warewolvesWon == true) or (team == true and vampiresWon == true)) {
 		cout << "Your team lost..." << endl;
 	}
-	
+
 	vecV.clear();
 	vecW.clear();
-	
+
 	return 0;
 }
