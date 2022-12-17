@@ -362,7 +362,7 @@ void moveWareWolves(char** Map, warewolfVector& vecW, vampireVector& vecV, int r
 				if (coord.x != wolf2->getCoord().x or coord.y != wolf2->getCoord().y or (*wolf) == (*wolf2))
 					// == operator is overloaded
 					continue;
-				if ((*wolf2)[0] <= HP and (*wolf)[1] > 0 and rand() % 2 == 0) { // if 2nd warewolf's HP is not full, and 1st wolf has a med, and also choose it randomly
+				if ((*wolf2)[0] < HP and (*wolf)[1] > 0 and rand() % 2 == 0) { // if 2nd warewolf's HP is not full, and 1st wolf has a med, and also choose it randomly
 					wolf2->heal();
 					wolf->consumedMed();
 				}
