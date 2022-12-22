@@ -157,6 +157,7 @@ int main() {
 
 	vecV.clear();
 	vecW.clear();
+	delete Map;
 
 	return 0;
 }
